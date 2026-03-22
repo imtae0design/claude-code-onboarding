@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code 온보딩 가이드</title>
+<style>
+  :root {
+    --primary: #D97757;
+    --primary-bg: rgba(217,119,87,0.12);
+    --primary-border: rgba(217,119,87,0.35);
+    --bg-dark: #1a1a2e;
+    --bg-card: #16213e;
+    --bg-card2: #0f3460;
+    --text: #e0e0e0;
+    --text-light: #a0a0b0;
+    --accent: #f5a623;
+    --green: #4CAF50;
+    --blue: #4fc3f7;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text);
+    scroll-behavior: smooth;
+  }
+
+  /* ── Navigation ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(26,26,46,0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    padding: 10px 24px;
+    display: flex; justify-content: space-between; align-items: center; gap: 16px;
+  }
+  nav .logo { font-size: 15px; font-weight: 700; color: var(--primary); white-space: nowrap; }
+  nav .nav-links { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav .nav-links a {
+    color: var(--text-light); text-decoration: none; font-size: 12px;
+    padding: 5px 10px; border-radius: 20px; transition: all 0.2s;
+    white-space: nowrap; border-left: 2px solid var(--primary);
+  }
+  nav .nav-links a:hover { color: white; background: rgba(255,255,255,0.08); }
+  nav .nav-links a.no-border { border-left: none; }
+
+  /* ── Slide ── */
+  .slide {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 80px 40px 60px; position: relative; overflow: hidden;
+  }
+  .slide-inner {
+    max-width: 900px; width: 100%;
+    border-left: 3px solid var(--primary); padding-left: 24px;
+  }
+
+  /* ── Cover ── */
+  #slide1 { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%); text-align: center; }
+  #slide1::before {
+    content: ''; position: absolute; width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(217,119,87,0.15) 0%, transparent 70%);
+    top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+  }
+  #slide1 .slide-inner { border-left: none; padding-left: 0; }
+  #slide-final .slide-inner { border-left: none; padding-left: 0; }
+
+  .cover-badge {
+    display: inline-block; background: rgba(217,119,87,0.2);
+    border: 1px solid var(--primary); color: var(--primary);
+    font-size: 13px; padding: 6px 18px; border-radius: 20px;
+    margin-bottom: 24px; letter-spacing: 1px;
+  }
+  .cover-title {
+    font-size: 52px; font-weight: 900; line-height: 1.2; margin-bottom: 16px;
+    background: linear-gradient(90deg, #fff 0%, var(--primary) 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .cover-subtitle { font-size: 20px; color: var(--text-light); margin-bottom: 40px; line-height: 1.6; }
+  .cover-meta { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; }
+  .meta-chip {
+    background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1);
+    padding: 10px 20px; border-radius: 12px; font-size: 14px; color: var(--text-light);
+  }
+  .meta-chip span { color: var(--accent); font-weight: 700; }
+  .cover-steps { display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 32px; flex-wrap: wrap; }
+  .cover-step-chip {
+    display: flex; align-items: center; gap: 8px; padding: 10px 18px; border-radius: 12px;
+    font-size: 13px; font-weight: 600; background: var(--primary-bg);
+    border: 1px solid var(--primary-border); color: var(--primary);
+  }
+  .cover-step-chip .chip-num {
+    width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center;
+    justify-content: center; font-size: 11px; font-weight: 900;
+    background: var(--primary); color: var(--bg-dark);
+  }
+
+  /* ── Typography ── */
+  .section-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 3px;
+    text-transform: uppercase; margin-bottom: 10px; color: var(--text-light);
+  }
+  .slide-title { font-size: 36px; font-weight: 800; margin-bottom: 12px; line-height: 1.3; }
+  .slide-desc { font-size: 16px; color: var(--text-light); margin-bottom: 28px; line-height: 1.7; }
+
+  /* ── Step Cards ── */
+  .steps { display: flex; flex-direction: column; gap: 14px; }
+  .step-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px; padding: 18px 22px;
+    display: flex; align-items: flex-start; gap: 18px;
+    transition: transform 0.2s; position: relative; overflow: hidden;
+  }
+  .step-card::before { content:''; position:absolute; left:0;top:0;bottom:0; width:3px; background:var(--primary); border-radius:3px 0 0 3px; }
+  .step-card:hover { transform: translateX(4px); }
+  .step-num {
+    min-width: 38px; height: 38px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px; font-weight: 900; color: white; flex-shrink: 0; background: var(--primary);
+  }
+  .step-content { flex: 1; }
+  .step-title { font-size: 16px; font-weight: 700; margin-bottom: 5px; }
+  .step-body { font-size: 14px; color: var(--text-light); line-height: 1.6; }
+
+  /* ── Code Block ── */
+  .code-block {
+    background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 10px; padding: 14px 18px;
+    font-family: 'D2Coding', 'Consolas', monospace;
+    font-size: 13px; line-height: 1.7; overflow-x: auto; margin-top: 10px; color: #a8d8ea;
+  }
+  .code-block .key { color: #f5a623; }
+  .code-block .comment { color: #6a9955; }
+  .code-block .val { color: #a6e3a1; font-weight: 600; }
+
+  /* ── Info Boxes ── */
+  .tip-box, .warn-box {
+    border-radius: 12px; padding: 14px 18px; margin-top: 16px;
+    font-size: 14px; line-height: 1.6; display: flex; gap: 10px; align-items: flex-start;
+  }
+  .tip-box { background: rgba(76,195,247,0.07); border: 1px solid rgba(76,195,247,0.25); color: var(--blue); }
+  .warn-box { background: rgba(245,166,35,0.07); border: 1px solid rgba(245,166,35,0.25); color: var(--accent); }
+  .hl-box {
+    border-radius: 12px; padding: 14px 18px; margin-top: 16px;
+    font-size: 14px; line-height: 1.6; display: flex; gap: 10px; align-items: flex-start;
+    background: var(--primary-bg); border: 1px solid var(--primary-border); color: var(--accent);
+  }
+  .security-box {
+    border-radius: 12px; padding: 14px 18px; margin-top: 16px;
+    font-size: 14px; line-height: 1.6; display: flex; gap: 10px; align-items: flex-start;
+    background: rgba(243,139,168,0.07); border: 1px solid rgba(243,139,168,0.3); color: #f38ba8;
+  }
+  .tip-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+
+  /* ── Icon Grid ── */
+  .icon-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px,1fr)); gap: 14px; margin-top: 8px; }
+  .icon-card {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 14px; padding: 22px 18px; text-align: center;
+  }
+  .icon-card .icon { font-size: 34px; margin-bottom: 10px; }
+  .icon-card .icon-title { font-size: 14px; font-weight: 700; margin-bottom: 5px; }
+  .icon-card .icon-desc { font-size: 12px; color: var(--text-light); line-height: 1.5; }
+
+  /* ── Two Column ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── Token Section ── */
+  .token-section {
+    background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 14px; padding: 18px;
+  }
+  .token-section h3 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: var(--accent); }
+  .token-steps { list-style: none; counter-reset: ts; }
+  .token-steps li {
+    counter-increment: ts; font-size: 12px; color: var(--text-light);
+    padding: 4px 0 4px 26px; position: relative; line-height: 1.5;
+  }
+  .token-steps li::before {
+    content: counter(ts); position: absolute; left: 0;
+    width: 18px; height: 18px; background: rgba(245,166,35,0.2); border-radius: 50%;
+    font-size: 10px; color: var(--accent); font-weight: 700; text-align: center; line-height: 18px;
+  }
+
+  /* ── Mockup Windows ── */
+  .mockup-window {
+    border-radius: 10px; overflow: hidden; margin-top: 12px;
+    font-family: 'D2Coding', 'Consolas', monospace; font-size: 13px;
+    border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+  }
+  .mockup-bar {
+    display: flex; align-items: center; gap: 6px; padding: 9px 14px;
+    background: rgba(255,255,255,0.06); border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+  .dot-r { width:10px; height:10px; border-radius:50%; background:#ff5f57; display:inline-block; flex-shrink:0; }
+  .dot-y { width:10px; height:10px; border-radius:50%; background:#febc2e; display:inline-block; flex-shrink:0; }
+  .dot-g { width:10px; height:10px; border-radius:50%; background:#28c840; display:inline-block; flex-shrink:0; }
+  .bar-title { font-size: 12px; color: rgba(255,255,255,0.4); margin-left: 8px; font-family: 'Apple SD Gothic Neo', sans-serif; }
+
+  /* Terminal */
+  .mockup-terminal .mockup-body { background: #0d1117; padding: 16px 20px; color: #c9d1d9; line-height: 1.9; }
+  .t-prompt { color: #58a6ff; }
+  .t-cmd { color: #79c0ff; font-weight: 600; }
+  .t-input { color: #f0f6fc; }
+  .t-out { color: #8b949e; font-size: 12px; }
+  .t-cursor {
+    display: inline-block; width: 8px; height: 14px; background: var(--primary);
+    vertical-align: middle; animation: blink 1s step-end infinite; margin-left: 2px;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+  /* Editor */
+  .mockup-editor .mockup-body { background: #1e1e2e; padding: 10px 0; color: #cdd6f4; line-height: 1.75; }
+  .e-line { display: flex; align-items: baseline; padding: 1px 20px 1px 0; font-size: 13px; }
+  .e-line.hl-orange { background: rgba(217,119,87,0.12); border-left: 2px solid var(--primary); }
+  .e-line.hl-green  { background: rgba(166,227,161,0.07); border-left: 2px solid #a6e3a1; }
+  .e-ln { min-width: 36px; text-align: right; padding-right: 16px; color: rgba(205,214,244,0.25); font-size: 12px; flex-shrink: 0; }
+  .e-key { color: #89dceb; }
+  .e-field { display: inline-block; min-width: 22ch; }
+  .e-str { color: #a6e3a1; }
+  .e-placeholder { color: #f38ba8; }
+  .e-comment { color: #6c7086; font-size: 12px; }
+  .e-val-true  { color: #a6e3a1; font-weight: 700; }
+  .e-val-empty { color: rgba(205,214,244,0.25); font-style: italic; font-size: 12px; }
+
+  /* Before/After Compare */
+  .compare-row { display: grid; grid-template-columns: 1fr 28px 1fr; gap: 8px; align-items: start; margin-top: 12px; }
+  .compare-arrow { display: flex; align-items: center; justify-content: center; color: var(--text-light); font-size: 18px; padding-top: 40px; }
+  .compare-label { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; font-family: 'Apple SD Gothic Neo', sans-serif; }
+  .compare-before .compare-label { color: #f38ba8; }
+  .compare-after  .compare-label { color: #a6e3a1; }
+
+  /* Browser */
+  .mockup-browser .mockup-body { background: #f0f2f5; padding: 14px 20px 20px; display: flex; flex-direction: column; align-items: center; }
+  .b-urlbar { width: 100%; background: white; border-radius: 20px; padding: 5px 14px; font-size: 12px; color: #888; margin-bottom: 12px; border: 1px solid #e0e0e0; font-family: 'Apple SD Gothic Neo', sans-serif; }
+  .naver-form { background: white; border-radius: 8px; padding: 20px 24px; width: 240px; text-align: center; box-shadow: 0 2px 12px rgba(0,0,0,0.12); }
+  .naver-logo { color: #03C75A; font-size: 20px; font-weight: 900; margin-bottom: 14px; letter-spacing: -0.5px; }
+  .naver-inp { width: 100%; border: 1px solid #dde; border-radius: 4px; padding: 8px 10px; font-size: 12px; margin-bottom: 8px; background: #f8f8fb; color: #999; text-align: left; font-family: 'Apple SD Gothic Neo', sans-serif; }
+  .naver-btn { width: 100%; background: #03C75A; color: white; border: none; border-radius: 4px; padding: 9px; font-size: 13px; font-weight: 700; margin-top: 4px; font-family: 'Apple SD Gothic Neo', sans-serif; }
+
+  /* ── Final Slide ── */
+  #slide-final { background: linear-gradient(135deg, #0f3460 0%, #16213e 50%, #1a1a2e 100%); text-align: center; }
+  .final-cta {
+    background: linear-gradient(135deg, rgba(217,119,87,0.15), rgba(217,119,87,0.03));
+    border: 1px solid rgba(217,119,87,0.35); border-radius: 18px; padding: 28px; margin-top: 28px;
+  }
+  .final-cta .cta-text { font-size: 24px; font-weight: 900; color: white; margin-bottom: 10px; }
+  .final-cta .cta-sub { font-size: 15px; color: var(--text-light); margin-bottom: 20px; }
+  .highlight-cmd {
+    display: inline-block; background: rgba(0,0,0,0.4);
+    border: 1px solid var(--primary); color: var(--primary);
+    font-family: monospace; font-size: 17px; padding: 11px 26px; border-radius: 10px; font-weight: 700;
+  }
+
+  /* ── Progress Dots ── */
+  .progress {
+    position: fixed; right: 20px; top: 50%; transform: translateY(-50%);
+    display: flex; flex-direction: column; gap: 6px; z-index: 99;
+  }
+  .progress a { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,0.18); display: block; transition: all 0.2s; text-decoration: none; }
+  .progress a.active { transform: scale(1.6); background: var(--primary); }
+  .progress a.dot-cover.active { background: white; }
+  .progress a.dot-final.active { background: var(--accent); }
+
+  /* ── Misc ── */
+  .slide-num { position: absolute; bottom: 22px; right: 36px; font-size: 11px; color: rgba(255,255,255,0.18); }
+  .divider { height: 1px; background: linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent); margin: 22px 0; }
+  .hl       { color: var(--primary); font-weight: 700; }
+  .hl-blue  { color: var(--blue);    font-weight: 700; }
+  .hl-green { color: var(--green);   font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav>
+  <div class="logo">🤖 Claude Code 가이드</div>
+  <div class="nav-links">
+    <a href="#slide1"      class="no-border">소개</a>
+    <a href="#slide2">서비스 연결</a>
+    <a href="#slide3">파일 다운로드</a>
+    <a href="#slide4">섹션 1 입력</a>
+    <a href="#slide5">Figma MCP</a>
+    <a href="#slide6">토큰 발급</a>
+    <a href="#slide7">자동화①</a>
+    <a href="#slide8">자동화②</a>
+    <a href="#slide9">자동화③</a>
+    <a href="#slide-final" class="no-border">시작하기</a>
+  </div>
+</nav>
+
+<!-- Progress Dots -->
+<div class="progress">
+  <a href="#slide1"      class="dot-cover active"></a>
+  <a href="#slide2"></a>
+  <a href="#slide3"></a>
+  <a href="#slide4"></a>
+  <a href="#slide5"></a>
+  <a href="#slide6"></a>
+  <a href="#slide7"></a>
+  <a href="#slide8"></a>
+  <a href="#slide9"></a>
+  <a href="#slide-final" class="dot-final"></a>
+</div>
+
+<!-- ══════════════════════════════════════
+     Slide 1: Cover
+══════════════════════════════════════ -->
+<section class="slide" id="slide1">
+  <div class="slide-inner" style="text-align:center;">
+    <div class="cover-badge">온보딩 가이드</div>
+    <h1 class="cover-title">Claude Code<br>시작하기</h1>
+    <p class="cover-subtitle">
+      WIKI · JIRA · GitHub · NAVER WORKS · Figma<br>
+      설정 파일 하나로 한 번에 연결까지
+    </p>
+    <div class="cover-meta">
+      <div class="meta-chip">⏱ 소요시간 <span>약 5분</span></div>
+      <div class="meta-chip">🎯 난이도 <span>초보자 OK</span></div>
+      <div class="meta-chip">🔧 준비물 <span>Claude Code</span></div>
+    </div>
+    <div class="cover-steps">
+      <div class="cover-step-chip"><div class="chip-num">1</div>파일 준비 & 토큰 발급</div>
+      <div style="color:rgba(255,255,255,0.2);font-size:18px;">→</div>
+      <div class="cover-step-chip"><div class="chip-num">2</div>Claude에게 자동화 명령</div>
+      <div style="color:rgba(255,255,255,0.2);font-size:18px;">→</div>
+      <div class="cover-step-chip"><div class="chip-num">3</div>완료! 바로 사용</div>
+    </div>
+  </div>
+  <span class="slide-num">1 / 10</span>
+</section>
+
+<!-- ══════════════════════════════════════
+     Slide 2: 개요
+══════════════════════════════════════ -->
+<section class="slide" id="slide2">
+  <div class="slide-inner">
+    <p class="section-label">개요</p>
+    <h2 class="slide-title">3분만에 모든 서비스 연결하기</h2>
+    <p class="slide-desc">
+      Claude Code에 사내 서비스를 연결하면 <span class="hl">훨씬 강력하게</span> 활용할 수 있어요.<br>
+      원하는 서비스만 골라서 연결하면 돼요!
+    </p>
+    <div class="icon-grid">
+      <div class="icon-card"><div class="icon">📝</div><div class="icon-title">WIKI 연결</div><div class="icon-desc">Confluence 위키 자동으로 읽고 쓰기</div></div>
+      <div class="icon-card"><div class="icon">🎯</div><div class="icon-title">JIRA 연결</div><div class="icon-desc">할당된 이슈 수집 & 정리</div></div>
+      <div class="icon-card"><div class="icon">🐙</div><div class="icon-title">GitHub 연결</div><div class="icon-desc">코드 읽고 스펙 파악</div></div>
+      <div class="icon-card"><div class="icon">💬</div><div class="icon-title">NAVER WORKS 연결</div><div class="icon-desc">웍스 메시지·캘린더 연동</div></div>
+      <div class="icon-card"><div class="icon">🎨</div><div class="icon-title">Figma 연결</div><div class="icon-desc">디자인 파일 직접 분석<br>별도 토큰 불필요</div></div>
+    </div>
+    <div class="hl-box" style="margin-top:20px">
+      <div class="tip-icon">✨</div>
+      <div><strong>모두 연결 안 해도 됩니다!</strong><br>필요한 것만 골라서 연결하면 되고, 비어있는 항목은 자동으로 건너뜁니다.</div>
+    </div>
+  </div>
+  <span class="slide-num">2 / 10</span>
+</section>
+
+<!-- ══════════════════════════════════════
+     Slide 3: 파일 다운로드
+══════════════════════════════════════ -->
+<section class="slide" id="slide3">
+  <div class="slide-inner">
+    <p class="section-label">사전 준비 ①</p>
+    <h2 class="slide-title">설정 파일 다운로드</h2>
+    <p class="slide-desc">
+      Claude에게 "어디에 어떻게 연결할지"를 알려주는 설정 파일이에요.<br>
+      딱 한 번만 작성하면 이후로는 자동으로 처리돼요!
+    </p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">OS에 맞는 설정 파일 다운로드</div>
+          <div class="step-body">
+            사용 중인 운영체제에 맞는 파일을 다운로드하세요.
+            <div class="code-block" style="margin-top:10px">
+              🍎 <strong>macOS</strong><br>
+              <a href="https://works.do/5s9BFPM" target="_blank" style="color:#f5a623;text-decoration:underline;">https://works.do/5s9BFPM</a><br><br>
+              🪟 <strong>Windows (WSL)</strong><br>
+              <a href="https://works.do/G8UuDeg" target="_blank" style="color:#f5a623;text-decoration:underline;">https://works.do/G8UuDeg</a>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">파일을 작업 폴더에 저장</div>
+          <div class="step-body">
+            다운받은 파일을 원하는 폴더에 저장하세요.<br>
+            <span style="color:var(--text-light)">어디든 상관없어요. 나중에 Claude에게 경로를 알려주면 됩니다.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">3 / 10</span>
+</section>
+
+<!-- ══════════════════════════════════════
+     Slide 4: 섹션 1 값 입력
+══════════════════════════════════════ -->
+<section class="slide" id="slide4">
+  <div class="slide-inner">
+    <p class="section-label">사전 준비 ②</p>
+    <h2 class="slide-title">섹션 1에 값 입력</h2>
+    <p class="slide-desc">
+      파일을 텍스트 에디터로 열어 서비스 <span class="hl">URL·Host</span>와 사용할 서비스의 <span class="hl">ENABLED 플래그</span>를 입력하세요.<br>
+      토큰은 여기에 입력하지 않아도 됩니다.
+    </p>
+    <div class="step-card" style="margin-bottom:14px;">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <div class="step-title">URL·Host 입력 + 연결할 서비스에 true 입력</div>
+        <div class="step-body">
+          URL은 비워두면 기본값(사내 주소)이 자동 적용됩니다. 사용하지 않을 서비스 플래그는 비워두면 건너뜁니다.
+          <div class="mockup-window mockup-editor" style="margin-top:12px;">
+            <div class="mockup-bar">
+              <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+              <span class="bar-title">claude-code-onboarding_mac.md</span>
+            </div>
+            <div class="mockup-body">
+              <div class="e-line"><span class="e-ln">24</span><span class="e-comment"># Confluence·Jira</span></div>
+              <div class="e-line hl-orange"><span class="e-ln">25</span><span class="e-field"><span class="e-key">CONFLUENCE_URL</span>=</span><span class="e-str">https://wiki.navercorp.com</span> <span class="e-comment">← URL 입력</span></div>
+              <div class="e-line hl-orange"><span class="e-ln">26</span><span class="e-field"><span class="e-key">JIRA_URL</span>=</span><span class="e-str">https://jira.navercorp.com</span></div>
+              <div class="e-line hl-orange"><span class="e-ln">27</span><span class="e-field"><span class="e-key">CONFLUENCE_ENABLED</span>=</span><span class="e-val-true">true</span> <span class="e-comment">← 사용하면 true</span></div>
+              <div class="e-line"><span class="e-ln">28</span>&nbsp;</div>
+              <div class="e-line"><span class="e-ln">29</span><span class="e-comment"># GitHub</span></div>
+              <div class="e-line"><span class="e-ln">30</span><span class="e-field"><span class="e-key">GITHUB_HOST</span>=</span><span class="e-val-empty">비워두면 기본값 자동 적용</span></div>
+              <div class="e-line"><span class="e-ln">31</span><span class="e-field"><span class="e-key">GITHUB_ENABLED</span>=</span><span class="e-val-empty">비워두면 건너뜀</span></div>
+              <div class="e-line"><span class="e-ln">32</span>&nbsp;</div>
+              <div class="e-line"><span class="e-ln">33</span><span class="e-comment"># 네이버 웍스</span></div>
+              <div class="e-line hl-orange"><span class="e-ln">34</span><span class="e-field"><span class="e-key">NAVER_WORKS_ENABLED</span>=</span><span class="e-val-true">true</span></div>
+              <div class="e-line"><span class="e-ln">35</span>&nbsp;</div>
+              <div class="e-line"><span class="e-ln">36</span><span class="e-comment"># Figma MCP</span></div>
+              <div class="e-line"><span class="e-ln">37</span><span class="e-field"><span class="e-key">FIGMA_ENABLED</span>=</span><span class="e-val-empty">비워두면 건너뜀</span></div>
+              <div class="e-line"><span class="e-ln">38</span><span class="e-field"><span class="e-key">FIGMA_DESKTOP_URL</span>=</span><span class="e-val-empty">비워두면 기본값 자동 적용</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="security-box">
+      <div class="tip-icon">🔒</div>
+      <div>
+        <strong>토큰은 이 파일에 입력하지 마세요!</strong><br>
+        자동화 중 Claude가 설정 파일을 생성한 뒤 토큰 입력 위치를 직접 안내합니다.
+      </div>
+    </div>
+    <div class="tip-box">
+      <div class="tip-icon">🚀</div>
+      <div>
+        <strong>코드도 바로 보고 싶다면? (선택)</strong><br>
+        아래 항목도 함께 입력하면 GitHub 레포를 로컬에 클론해 Claude가 코드를 바로 읽을 수 있어요.
+        <div class="code-block" style="margin-top:8px;">
+          <span class="key">REPO_ORG_PATH</span>=&nbsp;&nbsp;&nbsp;<span class="comment">(예: performance-ad/pa-dsp)</span><br>
+          <span class="key">REPO_LOCAL_PATH</span>=&nbsp;<span class="comment">(예: ~/dev/pa-dsp)</span><br>
+          <span class="key">BRANCH_DEV</span>=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(예: qa2/dev)</span><br>
+          <span class="key">BRANCH_REAL</span>=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="comment">(예: master)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">4 / 10</span>
+</section>
+
+<!-- ══════════════════════════════════════
+     Slide 5: Figma MCP 상세 설명
+══════════════════════════════════════ -->
+<section class="slide" id="slide5">
+  <div class="slide-inner">
+    <p class="section-label">Figma MCP</p>
+    <h2 class="slide-title">Figma MCP 상세 설명</h2>
+    <p class="slide-desc">
+      별도 토큰 없이 Claude 계정 OAuth로 자동 인증돼요.<br>
+      <span class="hl">FIGMA_ENABLED=true</span>를 입력하면 자동화 명령 시 Figma도 함께 연결됩니다.
+    </p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">자동화 실행 시 두 가지 MCP가 함께 설치됩니다</div>
+          <div class="step-body">
+            자동화 명령을 실행하면 Figma MCP도 함께 설치돼요.
+            <div class="code-block" style="margin-top:10px">
+              <span class="key">figma-remote-mcp</span> — Figma 클라우드 (URL로 파일 접근)<br>
+              <span class="key">figma-desktop</span>&nbsp;&nbsp;&nbsp;&nbsp;— Figma 로컬 앱 (현재 열린 파일 직접 접근)
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">figma-desktop 사용 전 — Figma 앱에서 MCP 서버 활성화</div>
+          <div class="step-body">
+            처음 한 번만 하면 됩니다.
+            <div class="code-block" style="margin-top:10px;line-height:2;">
+              1. Figma 데스크톱 앱 <strong style="color:#fff">최신 버전</strong>으로 업데이트<br>
+              2. Figma 디자인 파일 열기<br>
+              3. 하단 툴바 → <span class="key">Dev Mode</span> 켜기 (단축키: <span class="key">Shift+D</span>)<br>
+              4. 오른쪽 인스펙트 패널 → <span class="key">MCP server</span> 섹션<br>
+              5. <span class="key">Enable desktop MCP server</span> 클릭<br>
+              6. 표시된 URL 확인 (예: <span style="color:#fff">http://127.0.0.1:3845/mcp</span>)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="tip-box" style="margin-top:20px">
+      <div class="tip-icon">💡</div>
+      <div style="width:100%">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <div style="font-weight:700;color:var(--blue);margin-bottom:8px;">🌐 figma-remote-mcp</div>
+            <div style="font-size:13px;line-height:1.8;">
+              Figma 앱 <strong>안 켜도 됨</strong><br>
+              Dev Mode <strong>불필요</strong><br>
+              Figma URL 공유받아 코드 생성<br>
+              디자인 → 코드 자동화
+            </div>
+          </div>
+          <div style="width:1px;background:rgba(76,195,247,0.2);flex-shrink:0;"></div>
+          <div style="flex:1;min-width:200px;">
+            <div style="font-weight:700;color:var(--blue);margin-bottom:8px;">🖥️ figma-desktop</div>
+            <div style="font-size:13px;line-height:1.8;">
+              Figma 앱 <strong>켜져 있어야 함</strong><br>
+              Dev Mode <strong>활성화 필요</strong> (Shift+D)<br>
+              현재 열린 파일 직접 작업
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">5 / 10</span>
+</section>
+
+<!-- ══════════════════════════════════════
+     Slide 6: 토큰 발급
+══════════════════════════════════════ -->
+<section class="slide" id="slide6">
+  <div class="slide-inner">
+    <p class="section-label">사전 준비 ③</p>
+    <h2 class="slide-title">서비스별 토큰 발급</h2>
+    <p class="slide-desc">
+      토큰은 각 서비스가 Claude를 믿고 접근을 허용하는 <span class="hl">'열쇠'</span>예요.<br>
+      지금은 발급해서 <strong style="color:var(--text)">메모만</strong> 해두세요. 입력은 자동화 중 Claude가 안내합니다.
+    </p>
+    <div class="two-col">
+      <div class="token-section">
+        <h3>📝 Confluence (Wiki) 토큰</h3>
+        <ol class="token-steps">
+          <li>CONFLUENCE_URL 주소로 접속</li>
+          <li>우측 상단 프로필 → <strong>Profile</strong></li>
+          <li>좌측 메뉴 → <strong>Personal Access Tokens</strong></li>
+          <li><strong>Create token</strong> 클릭</li>
+          <li>이름 입력 (예: <code style="color:#f5a623">claude-code</code>) → <strong>Create</strong></li>
+          <li>토큰 복사 → <span class="hl-green">메모해두기</span></li>
+        </ol>
+      </div>
+      <div class="token-section">
+        <h3>🎯 JIRA 토큰</h3>
+        <ol class="token-steps">
+          <li>JIRA_URL 주소로 접속</li>
+          <li>우측 상단 프로필 → <strong>Profile</strong></li>
+          <li>좌측 메뉴 → <strong>Personal Access Tokens</strong></li>
+          <li><strong>Create token</strong> 클릭</li>
+          <li>이름 입력 → <strong>Create</strong></li>
+          <li>토큰 복사 → <span class="hl-green">메모해두기</span></li>
+        </ol>
+      </div>
+      <div class="token-section">
+        <h3>🐙 GitHub 토큰</h3>
+        <ol class="token-steps">
+          <li>GITHUB_HOST 접속 <span style="color:var(--text-light);font-size:11px">(사내 네트워크 필요)</span></li>
+          <li>프로필 → <strong>Settings</strong></li>
+          <li>하단 → <strong>Developer settings</strong></li>
+          <li><strong>Personal access tokens → Tokens (classic)</strong></li>
+          <li><strong>Generate new token (classic)</strong> 클릭</li>
+          <li>권한: <code style="color:#f5a623">repo</code>, <code style="color:#f5a623">read:org</code>, <code style="color:#f5a623">read:user</code> 체크</li>
+          <li>토큰 복사 → <span class="hl-green">메모해두기</span></li>
+        </ol>
+      </div>
+      <div class="token-section">
+        <h3>💬 NAVER WORKS</h3>
+        <ol class="token-steps">
+          <li>파일에 <code style="color:#f5a623">NAVER_WORKS_ENABLED=true</code> 입력</li>
+          <li>자동화 실행 중 브라우저 로그인 창이 자동으로 열림</li>
+          <li>네이버 SSO 로그인 완료 → Claude에게 알림</li>
+        </ol>
+      </div>
+    </div>
+    <div class="warn-box" style="border-width:2px;margin-top:16px;">
+      <div class="tip-icon" style="font-size:22px;">⚠️</div>
+      <div>
+        <strong>NAVER WORKS 사용 시 — 자동화 실행 전 필수!</strong><br>
+        Cursor·Copilot 등 다른 AI 도구에 웍스 MCP가 연결되어 있으면 포트 충돌로 인증이 실패합니다.<br>
+        웍스 MCP가 연결된 모든 AI 도구를 완전히 종료한 뒤 진행하세요. &nbsp; macOS: <code style="color:var(--accent)">Cmd+Q</code> &nbsp;|&nbsp; Windows: <code style="color:var(--accent)">Alt+F4</code>
+      </div>
+    </div>
+    <div class="hl-box">
+      <div class="tip-icon">🎨</div>
+      <div>
+        <strong>Figma는 토큰 발급이 필요 없어요!</strong><br>
+        자동화 완료 후 첫 호출 시 Claude 계정으로 OAuth 인증이 자동으로 진행됩니다.
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">6 / 10</span>
+</section>
+
+<!-- ══════════════════════════════════════
+     Slide 7: 자동화 ① — Claude 실행 & 명령
+══════════════════════════════════════ -->
+<section class="slide" id="slide7">
+  <div class="slide-inner">
+    <p class="section-label">자동화 실행 ①</p>
+    <h2 class="slide-title">Claude에게 자동화 명령</h2>
+    <p class="slide-desc">
+      준비가 끝났으면 Claude Code를 열고 명령 하나만 입력하세요.<br>
+      이후 설치·설정은 <span class="hl">Claude가 자동으로</span> 처리합니다.
+    </p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">터미널에서 Claude Code 실행</div>
+          <div class="step-body">
+            설정 파일이 있는 폴더에서 터미널을 열고 <code style="color:var(--accent)">claude</code>를 입력하세요.
+            <div class="mockup-window mockup-terminal">
+              <div class="mockup-bar">
+                <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+                <span class="bar-title">Terminal</span>
+              </div>
+              <div class="mockup-body">
+                <div><span class="t-prompt">user@mac</span> <span style="color:#8b949e">~/Downloads</span> <span class="t-prompt">$</span> <span class="t-cmd">claude</span></div>
+                <div class="t-out">╭──────────────────────────────────────────────╮</div>
+                <div class="t-out">│  Claude Code  ·  claude.ai/code              │</div>
+                <div class="t-out">╰──────────────────────────────────────────────╯</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">아래 문장을 그대로 입력</div>
+          <div class="step-body">
+            Claude Code 프롬프트에 아래 문장을 입력하세요. 파일 경로를 함께 알려주면 더 정확해요.
+            <div class="mockup-window mockup-terminal">
+              <div class="mockup-bar">
+                <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+                <span class="bar-title">Claude Code</span>
+              </div>
+              <div class="mockup-body">
+                <div><span class="t-prompt">&gt;</span> <span class="t-input">이 파일 읽고 MCP 세팅 자동화해줘</span> <span class="t-cursor"></span></div>
+                <div style="margin-top:10px;font-size:12px;color:#8b949e;">
+                  또는 경로를 직접 지정:<br>
+                  <span style="color:#79c0ff">&gt; ~/Downloads/claude-code-onboarding_mac.md 읽고 MCP 세팅 자동화해줘</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="hl-box" style="margin-top:16px;">
+      <div class="tip-icon">✅</div>
+      <div>
+        Claude가 파일을 읽고 설치할 서비스 목록을 확인한 뒤 자동으로 진행합니다.<br>
+        중간에 몇 가지 <strong>직접 입력</strong>이 필요한 단계가 있어요 — 다음 슬라이드에서 안내합니다.
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">7 / 10</span>
+</section>
+
+<!-- ══════════════════════════════════════
+     Slide 8: 자동화 ② — 토큰 입력 & 웍스 로그인
+══════════════════════════════════════ -->
+<section class="slide" id="slide8">
+  <div class="slide-inner">
+    <p class="section-label">자동화 실행 ②</p>
+    <h2 class="slide-title">토큰 입력 & 웍스 로그인</h2>
+    <p class="slide-desc">
+      자동화 중 두 번 사용자 개입이 필요합니다.<br>
+      Claude가 안내할 때 아래 순서대로 진행해주세요.
+    </p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">settings.json에 토큰 직접 입력</div>
+          <div class="step-body">
+            Claude가 <code style="color:var(--accent)">~/.claude/settings.json</code>을 생성하고 토큰 입력 위치를 안내합니다.<br>
+            텍스트 에디터로 파일을 열어 플레이스홀더를 발급한 토큰으로 교체하세요.
+            <div class="compare-row">
+              <div class="compare-before">
+                <div class="compare-label">수정 전</div>
+                <div class="mockup-window mockup-editor">
+                  <div class="mockup-bar">
+                    <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+                    <span class="bar-title">settings.json</span>
+                  </div>
+                  <div class="mockup-body" style="font-size:12px;">
+                    <div class="e-line"><span class="e-ln">3</span><span style="color:#cdd6f4">&nbsp;"env": {</span></div>
+                    <div class="e-line hl-orange"><span class="e-ln">4</span>&nbsp;<span class="e-placeholder">"CONFLUENCE_PERSONAL_TOKEN":</span></div>
+                    <div class="e-line hl-orange"><span class="e-ln">5</span>&nbsp;&nbsp;&nbsp;<span class="e-placeholder">"YOUR_CONFLUENCE_TOKEN"</span></div>
+                    <div class="e-line"><span class="e-ln">6</span><span style="color:#cdd6f4">&nbsp;}</span></div>
+                  </div>
+                </div>
+              </div>
+              <div class="compare-arrow">→</div>
+              <div class="compare-after">
+                <div class="compare-label">수정 후</div>
+                <div class="mockup-window mockup-editor">
+                  <div class="mockup-bar">
+                    <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+                    <span class="bar-title">settings.json</span>
+                  </div>
+                  <div class="mockup-body" style="font-size:12px;">
+                    <div class="e-line"><span class="e-ln">3</span><span style="color:#cdd6f4">&nbsp;"env": {</span></div>
+                    <div class="e-line hl-green"><span class="e-ln">4</span>&nbsp;<span class="e-str">"CONFLUENCE_PERSONAL_TOKEN":</span></div>
+                    <div class="e-line hl-green"><span class="e-ln">5</span>&nbsp;&nbsp;&nbsp;<span class="e-str">"MTQ1MTIx..."</span>&nbsp;✅</div>
+                    <div class="e-line"><span class="e-ln">6</span><span style="color:#cdd6f4">&nbsp;}</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--text-light);margin-top:10px;">
+              입력 완료 후 Claude에게 <span class="hl-green">"토큰 입력 완료했어"</span>라고 알려주세요.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">[NAVER WORKS 연결 시] 브라우저 로그인</div>
+          <div class="step-body">
+            자동화 중 브라우저가 자동으로 열리면 <span class="hl">네이버 SSO 계정</span>으로 로그인하세요.
+            <div class="mockup-window mockup-browser">
+              <div class="mockup-bar">
+                <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+                <span class="bar-title">브라우저</span>
+              </div>
+              <div class="mockup-body">
+                <div class="b-urlbar">🔒 https://kr0-prismgw.io.naver.com/oauth/authorize?...</div>
+                <div class="naver-form">
+                  <div class="naver-logo">NAVER</div>
+                  <div style="font-size:11px;color:#999;margin-bottom:12px;">네이버 통합 SSO 로그인</div>
+                  <div class="naver-inp">아이디</div>
+                  <div class="naver-inp">비밀번호</div>
+                  <button class="naver-btn">로그인</button>
+                </div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--text-light);margin-top:10px;">
+              로그인 완료 후 Claude에게 <span class="hl-green">"웍스 로그인 완료했어"</span>라고 알려주세요.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">8 / 10</span>
+</section>
+
+<!-- ══════════════════════════════════════
+     Slide 9: 자동화 ③ — 완료 보고 & 재시작 & Figma
+══════════════════════════════════════ -->
+<section class="slide" id="slide9">
+  <div class="slide-inner">
+    <p class="section-label">자동화 실행 ③</p>
+    <h2 class="slide-title">완료 보고 확인 & 재시작</h2>
+    <p class="slide-desc">거의 다 왔어요! 마지막 두 단계만 남았습니다.</p>
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">자동화 완료 보고 확인</div>
+          <div class="step-body">
+            Claude가 아래와 같은 완료 보고를 보내면 설치가 끝난 거예요.
+            <div class="code-block" style="margin-top:10px;line-height:2.1;">
+              <span style="color:#a6e3a1">✅ mcp-atlassian (Confluence + Jira) 설치 완료</span><br>
+              <span style="color:#a0a0b0">⏭️ mcp-oss (GitHub) 건너뜀</span><br>
+              <span style="color:#a6e3a1">✅ naver-works (네이버 웍스) 설치 완료</span><br>
+              <span style="color:#a6e3a1">✅ figma-remote-mcp — settings.json 등록 완료 (재시작 후 별도 확인)</span><br>
+              <span style="color:#a6e3a1">✅ figma-desktop — settings.json 등록 완료 (재시작 후 별도 확인)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Claude Code 재시작</div>
+          <div class="step-body">
+            설정이 적용되려면 <strong>Claude Code를 완전히 종료 후 재실행</strong>해야 합니다.
+            <div class="code-block" style="margin-top:10px;">
+              🍎 macOS: <span class="key">Cmd+Q</span> 후 재실행<br>
+              🪟 Windows: <span class="key">Alt+F4</span> 또는 작업 표시줄 우클릭 → 창 닫기 후 재실행
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">[Figma 사용 시] 재시작 후 새 대화에서 인증</div>
+          <div class="step-body">
+            재시작 후 새 대화를 열고 아래 문장을 입력하면 Figma OAuth 인증 및 연결 검증이 자동으로 진행됩니다.
+            <div class="mockup-window mockup-terminal">
+              <div class="mockup-bar">
+                <span class="dot-r"></span><span class="dot-y"></span><span class="dot-g"></span>
+                <span class="bar-title">Claude Code — 새 대화</span>
+              </div>
+              <div class="mockup-body">
+                <div><span class="t-prompt">&gt;</span> <span class="t-input">figma-remote-mcp를 호출하여 인증 진행 및 연결 정상 여부 파악</span> <span class="t-cursor"></span></div>
+              </div>
+            </div>
+            <div style="font-size:12px;color:var(--text-light);margin-top:8px;">
+              브라우저에 Figma 로그인 팝업이 열리면 로그인하면 자동 완료됩니다.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-num">9 / 10</span>
+</section>
+
+<!-- ══════════════════════════════════════
+     Slide Final
+══════════════════════════════════════ -->
+<section class="slide" id="slide-final">
+  <div class="slide-inner" style="text-align:center;">
+    <p class="section-label" style="color:var(--accent);text-align:center;">완료!</p>
+    <h2 class="slide-title" style="font-size:40px;text-align:center;">이제 Claude에게<br>뭐든 시켜보세요! 🎉</h2>
+    <p class="slide-desc" style="text-align:center;">
+      모든 설정이 끝났습니다.<br>
+      막히면 Claude한테 물어보면 돼요. 안 되는 이유도 설명해 줄 거예요.
+    </p>
+    <div class="icon-grid" style="margin-bottom:24px;">
+      <div class="icon-card"><div class="icon">📖</div><div class="icon-title">위키 읽고 쓰기</div><div class="icon-desc">"지난주 회의록 위키에서 찾아줘"</div></div>
+      <div class="icon-card"><div class="icon">🎫</div><div class="icon-title">지라 이슈 수집</div><div class="icon-desc">"내 이름으로 할당된 이슈 정리해줘"</div></div>
+      <div class="icon-card"><div class="icon">🔍</div><div class="icon-title">코드 스펙 파악</div><div class="icon-desc">"이 API 어떻게 동작하는지 설명해줘"</div></div>
+      <div class="icon-card"><div class="icon">🎨</div><div class="icon-title">Figma 디자인 분석</div><div class="icon-desc">"이 컴포넌트 스펙 정리해줘"</div></div>
+    </div>
+    <div class="final-cta">
+      <div class="cta-text">Claude에게 이렇게 말해보세요</div>
+      <div class="cta-sub">Claude Code에서 새 대화 세션을 열고</div>
+      <div class="highlight-cmd">할당된 지라 이슈 정리하고 관련 위키 페이지 찾아줘</div>
+    </div>
+  </div>
+  <span class="slide-num">10 / 10</span>
+</section>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const dots   = document.querySelectorAll('.progress a');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const idx = Array.from(slides).indexOf(entry.target);
+      dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    }
+  });
+}, { threshold: 0.5 });
+
+slides.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
