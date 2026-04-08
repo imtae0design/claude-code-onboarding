@@ -452,13 +452,6 @@
         자동화 중 Claude가 설정 파일을 생성한 뒤 토큰 입력 위치를 직접 안내합니다.
       </div>
     </div>
-    <div class="security-box">
-      <div class="tip-icon">⚠️</div>
-      <div>
-        <strong>웍스 MCP 사용 시, 다른 AI 도구에서 웍스 MCP 연결을 먼저 해제하세요!</strong><br>
-        Cursor, Copilot 등 다른 AI 도구에서 네이버 웍스 MCP가 연결된 상태이면 토큰 충돌이 발생할 수 있습니다.
-      </div>
-    </div>
     <div class="tip-box">
       <div class="tip-icon">🚀</div>
       <div>
@@ -562,7 +555,7 @@
       토큰은 각 서비스가 Claude를 믿고 접근을 허용하는 <span class="hl">'열쇠'</span>예요.<br>
       지금은 발급해서 <strong style="color:var(--text)">메모만</strong> 해두세요. 입력은 자동화 중 Claude가 안내합니다.
     </p>
-    <div class="two-col">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
       <div class="token-section">
         <h3>📝 Confluence (Wiki) 토큰</h3>
         <ol class="token-steps">
@@ -597,28 +590,12 @@
           <li>토큰 복사 → <span class="hl-green">메모해두기</span></li>
         </ol>
       </div>
-      <div class="token-section">
-        <h3>💬 NAVER WORKS</h3>
-        <ol class="token-steps">
-          <li>파일에 <code style="color:#f5a623">NAVER_WORKS_ENABLED=true</code> 입력</li>
-          <li>자동화 실행 중 브라우저 로그인 창이 자동으로 열림</li>
-          <li>네이버 SSO 로그인 완료 → Claude에게 알림</li>
-        </ol>
-      </div>
-    </div>
-    <div class="warn-box" style="border-width:2px;margin-top:16px;">
-      <div class="tip-icon" style="font-size:22px;">⚠️</div>
-      <div>
-        <strong>NAVER WORKS 사용 시 — 자동화 실행 전 필수!</strong><br>
-        Cursor·Copilot 등 다른 AI 도구에 웍스 MCP가 연결되어 있으면 포트 충돌로 인증이 실패합니다.<br>
-        웍스 MCP가 연결된 모든 AI 도구를 완전히 종료한 뒤 진행하세요. &nbsp; macOS: <code style="color:var(--accent)">Cmd+Q</code> &nbsp;|&nbsp; Windows: <code style="color:var(--accent)">Alt+F4</code>
-      </div>
-    </div>
-    <div class="hl-box">
-      <div class="tip-icon">🎨</div>
-      <div>
-        <strong>Figma는 토큰 발급이 필요 없어요!</strong><br>
-        자동화 완료 후 첫 호출 시 Claude 계정으로 OAuth 인증이 자동으로 진행됩니다.
+      <div class="hl-box" style="margin:0;align-self:stretch;display:flex;align-items:center;gap:14px;">
+        <div class="tip-icon" style="font-size:24px;flex-shrink:0;">🎨</div>
+        <div>
+          <strong>NAVER WORKS · Figma는 토큰 발급이 필요 없어요!</strong><br>
+          NAVER WORKS는 자동화 중 브라우저 SSO 로그인으로, Figma는 첫 호출 시 Claude 계정 OAuth로 자동 인증됩니다.
+        </div>
       </div>
     </div>
   </div>
